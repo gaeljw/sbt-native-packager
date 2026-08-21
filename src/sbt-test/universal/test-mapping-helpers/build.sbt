@@ -11,16 +11,10 @@ name := "simple-test"
 version := "0.1.0"
 
 // or just place your cache folder in /src/universal/
-Universal / mappings ++= {
-  implicit val converter: FileConverter = fileConverter.value
-  PluginCompat.toFileRefsMapping(directory("src/main/resources/cache"))
-}
+Universal / mappings ++= directory("src/main/resources/cache")
 
 // or just place your cache folder in /src/universal/
-Universal / mappings ++= {
-  implicit val converter: FileConverter = fileConverter.value
-  PluginCompat.toFileRefsMapping(contentOf("src/main/resources/docs"))
-}
+Universal / mappings ++= contentOf("src/main/resources/docs")
 
 Universal / mappings += {
   (Compile / packageBin).value
