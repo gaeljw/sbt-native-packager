@@ -6,19 +6,19 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 // crossBuildingSettings
 lazy val scala212 = "2.12.20"
-lazy val scala3 = "3.7.3"
+lazy val scala3 = "3.8.4"
 Global / scalaVersion := scala3
 crossScalaVersions := Seq(scala3, scala212)
 (pluginCrossBuild / sbtVersion) := {
   scalaBinaryVersion.value match {
     case "2.12" => "1.5.8"
-    case _      => "2.0.0-RC6"
+    case _      => "2.0.8"
   }
 }
 scriptedSbt := {
   scalaBinaryVersion.value match {
     case "2.12" => "1.10.7"
-    case _      => "2.0.0-RC6"
+    case _      => "2.0.8"
   }
 }
 
@@ -122,8 +122,8 @@ addCommandAlias("validate", "; clean ; update ; validateFormatting ; test")
 // tests take quite some time to run.
 // Ultimately we should run only those tests that are necessary for a change
 addCommandAlias("validateUniversal", "scripted universal/*")
-addCommandAlias("validateUniversalSbt1", "++ 2.12.20; scripted universal-sbt1/*")
-addCommandAlias("validateUniversalSbt2", "++ 3.7.3; scripted universal-sbt2/*")
+addCommandAlias("validateUniversalSbt1", "scripted universal-sbt1/*")
+addCommandAlias("validateUniversalSbt2", "scripted universal-sbt2/*")
 addCommandAlias("validateJar", "scripted jar/*")
 addCommandAlias("validateBash", "scripted bash/*")
 addCommandAlias("validateAsh", "scripted ash/*")
@@ -131,8 +131,8 @@ addCommandAlias("validateGraalVMNativeImage", "scripted graalvm-native-image/*")
 addCommandAlias("validateRpm", "scripted rpm/*")
 addCommandAlias("validateDebian", "scripted debian/*")
 addCommandAlias("validateDocker", "scripted docker/*")
-addCommandAlias("validateDockerSbt1", "++ 2.12.20; scripted docker-sbt1/*")
-addCommandAlias("validateDockerSbt2", "++ 3.7.3; scripted docker-sbt2/*")
+addCommandAlias("validateDockerSbt1", "scripted docker-sbt1/*")
+addCommandAlias("validateDockerSbt2", "scripted docker-sbt2/*")
 addCommandAlias("validateJdkPackager", "scripted jdkpackager/*")
 // travis ci's jdk8 version doesn't support nested association elements.
 // error: Caused by: class com.sun.javafx.tools.ant.Info doesn't support the nested "association" element.

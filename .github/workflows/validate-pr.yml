@@ -11,8 +11,21 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # sbt 1.x / Scala 2.12 build still targets JDK 8.
           - os: ubuntu-latest
+            scala: 2.12.20
+            java: 8
           - os: macos-latest
+            scala: 2.12.20
+            java: 8
+          # sbt 2.x / Scala 3 build requires JDK 17+ (its compiler bridge is
+          # compiled to Java 17 class files).
+          - os: ubuntu-latest
+            scala: 3.8.4
+            java: 17
+          - os: macos-latest
+            scala: 3.8.4
+            java: 17
     runs-on: '${{ matrix.os }}'
     steps:
       - uses: actions/checkout@v5
@@ -20,65 +33,102 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: zulu
-          java-version: 8
+          java-version: '${{ matrix.java }}'
           cache: sbt
       - uses: sbt/setup-sbt@v1
       - name: Validate
-        run: sbt -v "+validate"
+        run: sbt -v "; ++${{ matrix.scala }} ; validate"
 
   scripted:
     strategy:
       fail-fast: false
       matrix:
         include:
+          # Each scripted suite runs once against sbt 1.x / Scala 2.12 (JDK 8)
+          # and once against sbt 2.x / Scala 3 (JDK 17+, required by its
+          # compiler bridge).
           - os: ubuntu-latest
             java: 8
             distribution: zulu
-            command: +validateUniversal
+            command: "; ++2.12.20 ; validateUniversal"
+          - os: ubuntu-latest
+            java: 17
+            distribution: zulu
+            command: "; ++3.8.4 ; validateUniversal"
           - os: ubuntu-latest
             java: 8
             distribution: zulu
-            command: validateUniversalSbt1 # No cross build, only SBT 1.x
+            command: "; ++2.12.20 ; validateUniversalSbt1" # No cross build, only SBT 1.x
+          - os: ubuntu-latest
+            java: 17
+            distribution: zulu
+            command: "; ++3.8.4 ; validateUniversalSbt2" # No cross build, only SBT 2.x
           - os: ubuntu-latest
             java: 8
             distribution: zulu
-            command: validateUniversalSbt2 # No cross build, only SBT 2.x
+            command: "; ++2.12.20 ; validateJar"
+          - os: ubuntu-latest
+            java: 17
+            distribution: zulu
+            command: "; ++3.8.4 ; validateJar"
           - os: ubuntu-latest
             java: 8
             distribution: zulu
-            command: +validateJar
+            command: "; ++2.12.20 ; validateBash"
+          - os: ubuntu-latest
+            java: 17
+            distribution: zulu
+            command: "; ++3.8.4 ; validateBash"
           - os: ubuntu-latest
             java: 8
             distribution: zulu
-            command: +validateBash
+            command: "; ++2.12.20 ; validateAsh"
+          - os: ubuntu-latest
+            java: 17
+            distribution: zulu
+            command: "; ++3.8.4 ; validateAsh"
           - os: ubuntu-latest
             java: 8
             distribution: zulu
-            command: +validateAsh
+            command: "; ++2.12.20 ; validateRpm"
+          - os: ubuntu-latest
+            java: 17
+            distribution: zulu
+            command: "; ++3.8.4 ; validateRpm"
           - os: ubuntu-latest
             java: 8
             distribution: zulu
-            command: +validateRpm
+            command: "; ++2.12.20 ; validateDebian"
+          - os: ubuntu-latest
+            java: 17
+            distribution: zulu
+            command: "; ++3.8.4 ; validateDebian"
           - os: ubuntu-latest
             java: 8
             distribution: zulu
-            command: +validateDebian
+            command: "; ++2.12.20 ; validateDocker"
+          - os: ubuntu-latest
+            java: 17
+            distribution: zulu
+            command: "; ++3.8.4 ; validateDocker"
           - os: ubuntu-latest
             java: 8
             distribution: zulu
-            command: +validateDocker
+            command: "; ++2.12.20 ; validateDockerSbt1" # No cross build, only SBT 1.x
           - os: ubuntu-latest
-            java: 8
+            java: 17
             distribution: zulu
-            command: validateDockerSbt1 # No cross build, only SBT 1.x
-          - os: ubuntu-latest
-            java: 8
-            distribution: zulu
-            command: validateDockerSbt2 # No cross build, only SBT 2.x
+            command: "; ++3.8.4 ; validateDockerSbt2" # No cross build, only SBT 2.x
           - os: ubuntu-latest
             java: 11
             distribution: temurin
-            command: +validateJlink
+            command: "; ++2.12.20 ; validateJlink"
+          - os: ubuntu-latest
+            java: 17
+            distribution: temurin
+            command: "; ++3.8.4 ; validateJlink"
+          # GraalVM 22 already satisfies the JDK 17+ floor needed by the
+          # Scala 3 / sbt 2 compiler bridge, so this one stays cross-built.
           - os: ubuntu-latest
             java: 22
             distribution: graalvm
@@ -86,11 +136,19 @@ jobs:
           - os: macos-latest
             java: 8
             distribution: zulu
-            command: +validateMacOS
+            command: "; ++2.12.20 ; validateMacOS"
+          - os: macos-latest
+            java: 17
+            distribution: zulu
+            command: "; ++3.8.4 ; validateMacOS"
           - os: windows-latest
             java: 8
             distribution: zulu
-            command: +validateWindows
+            command: "; ++2.12.20 ; validateWindows"
+          - os: windows-latest
+            java: 17
+            distribution: zulu
+            command: "; ++3.8.4 ; validateWindows"
     needs:
       - validate
     runs-on: '${{ matrix.os }}'

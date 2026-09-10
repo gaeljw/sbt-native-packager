@@ -189,15 +189,16 @@ object JlinkPlugin extends AutoPlugin {
   // - otherwise yield the major version number (e.g. 11.0.3 -> 11).
   private[jlink] val javaVersionPattern = """JAVA_VERSION="(?:1\.)?(\d+).*?"""".r
 
-  private[jlink] def parseJdeps(jdepsOutput: String): immutable.TreeSet[PackageDependency] =
-    jdepsOutput.linesIterator.foldLeft(
-      immutable.TreeSet.empty[PackageDependency](PackageDependency.PackageDependencyOrdering)
-    ) { (z, l) =>
+  private[jlink] def parseJdeps(jdepsOutput: String): immutable.TreeSet[PackageDependency] = {
+    implicit val packageDependencyOrdering: Ordering[PackageDependency] =
+      PackageDependency.PackageDependencyOrdering
+    jdepsOutput.linesIterator.foldLeft(immutable.TreeSet.empty[PackageDependency]) { (z, l) =>
       PackageDependency.parse(l) match {
         case Some(pd) => z + pd
         case _        => z
       }
     }
+  }
 
   // TODO: deduplicate with UniversalPlugin and DebianPlugin
   /** Finds all files in a directory. */
