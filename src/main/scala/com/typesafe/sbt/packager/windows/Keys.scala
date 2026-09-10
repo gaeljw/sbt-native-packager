@@ -24,6 +24,7 @@ trait WindowsKeys {
   val wixConfig =
     TaskKey[xml.Node]("wix-xml", "The WIX XML configuration for this package.")
   @deprecated("Use wixFiles task instead", "1.3.15")
+  @transient
   val wixFile = TaskKey[File]("wix-file", "The generated WIX XML file.")
   @transient
   val wixFiles = TaskKey[Seq[File]]("wix-files", "WIX XML sources (*.wxs) to package with")
