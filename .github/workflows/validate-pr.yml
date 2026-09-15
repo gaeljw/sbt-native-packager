@@ -38,6 +38,14 @@ jobs:
           - os: ubuntu-latest
             java: 8
             distribution: zulu
+            command: validateUniversalSbt1 # No cross build, only SBT 1.x
+          - os: ubuntu-latest
+            java: 8
+            distribution: zulu
+            command: validateUniversalSbt2 # No cross build, only SBT 2.x
+          - os: ubuntu-latest
+            java: 8
+            distribution: zulu
             command: +validateJar
           - os: ubuntu-latest
             java: 8
@@ -59,6 +67,14 @@ jobs:
             java: 8
             distribution: zulu
             command: +validateDocker
+          - os: ubuntu-latest
+            java: 8
+            distribution: zulu
+            command: validateDockerSbt1 # No cross build, only SBT 1.x
+          - os: ubuntu-latest
+            java: 8
+            distribution: zulu
+            command: validateDockerSbt2 # No cross build, only SBT 2.x
           - os: ubuntu-latest
             java: 11
             distribution: temurin
